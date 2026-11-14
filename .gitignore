@@ -1,0 +1,6 @@
+# Generated voice files are build output, not source.
+*.ogg
+*.wav
+/work/
+mod_settings.json
+__pycache__/

@@ -1,0 +1,19 @@
+; A table that defines a language replaces the built-in list, so German,
+; French and Polish are listed again with the engine's built-in values.
+#Supported Languages
+$Language: German
++XSTR: 1889
++Extension: gr
++Special Character Index: 164
+$Language: French
++XSTR: 1890
++Extension: fr
++Special Character Index: 164
+$Language: Polish
++XSTR: 1891
++Extension: pl
++Special Character Index: 127
+$Language: Chinese (CN)
++Extension: cn
++Special Character Index: 0
+#End
