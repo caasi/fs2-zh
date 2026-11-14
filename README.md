@@ -15,11 +15,13 @@ Status: work in progress. Only Training 1 has Chinese voice lines. The repo does
 ## Files
 
 - `lines/<mission>.csv`: the voice lines of one mission. `zh_cn` is the text that the TTS model speaks, so numbers and codes are written as they are spoken.
-- `lines/glossary.md`: zh-CN terms, ranks and rules. `lines/glossary-tw.md`: zh-TW terms of the ROC Armed Forces. `lines/aviation-terms.md`: mainland and Taiwan aviation terms.
-- `mods/cn`: the Knossos mod. `data/tables/zh-lcl.tbm` adds the language `Chinese (CN)`.
+- `lines/glossary-cn.md`: zh-CN terms, ranks and rules. `lines/glossary-tw.md`: zh-TW terms of the ROC Armed Forces. `lines/aviation-terms.md`: mainland and Taiwan aviation terms.
+- `mods/cn`, `mods/tw`: the Knossos mods. `data/tables/zh-cn-lcl.tbm` adds the language `Chinese (CN)`, and `zh-tw-lcl.tbm` adds `Chinese (TW)`. Each table has its own file name, so that the engine reads both when both mods are on.
 - `scripts/vpx.py`: reads a retail `.vp` archive.
 - `scripts/extract_en.py`: writes the English lines, their lengths and the retail voice files of one mission to `work/`.
 - `scripts/gen_cn.py`: makes the cn voice files with IndexTTS-2.5.
+- `scripts/gen_tw.py`: makes the tw voice files with CosyVoice 3. `scripts/test_gen_tw.py` checks the text it gives to the model.
+- `scripts/match_loudness.py`: sets the loudness of each generated file to the loudness of its retail line.
 
 The English text, the retail voice files and the generated `.ogg` files are not in git.
 
@@ -39,6 +41,12 @@ cd <index-tts checkout>
 .venv/bin/python <this repo>/scripts/gen_cn.py <this repo>/lines/training-1.csv <this repo>/work <this repo>/mods/cn/data/voice
 ```
 
+Then set the loudness of the new files to the loudness of the retail lines. The TTS models do not do this: the cn output was 0 to 5 dB above the retail lines, and the tw output was 6 to 18 dB below them.
+
+```bash
+python3 -I <this repo>/scripts/match_loudness.py <this repo>/work <this repo>/mods/cn/data/voice cn
+```
+
 ## Install the mod in Knossos
 
 1. Make a link to `mods/cn` in the Knossos library: `<library>/FreespaceOpen/fs2-zh-voice-cn/fs2-zh-voice-cn-0.1.0`.
@@ -49,7 +57,7 @@ cd <index-tts checkout>
 ## How each variant is voiced
 
 - **cn**: IndexTTS-2.5. Each line copies the timbre of its speaker's reference line and the emotion of its own original line.
-- **tw** (first version): the Taiwan accent comes first, so there is no emotion control. If the model cannot copy the timbre of the original voice, a default voice of the same sex as the speaker is used.
+- **tw** (first version): CosyVoice 3, with Taiwan Mandarin reference voices from Common Voice, and the line in Simplified script as the input. The Taiwan accent comes first, so there is no emotion control. See `docs/voices-tw.md`.
 
 ## License
 
@@ -57,6 +65,6 @@ cd <index-tts checkout>
 - The Chinese lines, the glossaries and the mod files (`lines/`, `mods/`): [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The license covers only the work of this project.
 - The Chinese lines are translations of the FreeSpace 2 script. The rights in the original script belong to the owners of FreeSpace 2.
 - The generated voice files are made with the retail voice files of FreeSpace 2 as the reference. The IndexTTS model has its own license: [LICENSE](https://github.com/index-tts/index-tts/blob/main/LICENSE). This repo does not distribute voice files.
-- The values for German, French and Polish in `zh-lcl.tbm` are the built-in values of FreeSpace Open.
+- The values for German, French and Polish in the `*-lcl.tbm` tables are the built-in values of FreeSpace Open.
 - The quotes from dictionaries and news in `lines/glossary-tw.md` and `lines/aviation-terms.md` keep the rights of their owners.
 - Not covered: the English text and the retail voice files that the scripts read into `work/`. The mods need a retail copy of FreeSpace 2 and contain none of its files.
