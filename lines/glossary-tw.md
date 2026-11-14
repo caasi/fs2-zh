@@ -40,14 +40,14 @@ Add 海軍 only when the service is not clear from the line.
 | afterburner | 後燃器 | 後燃器 | zh.wikipedia (zh-tw) 加力燃燒室 |
 | head-up display | 抬頭顯示器 | 抬頭顯示器 | DICT: "head-up display 抬頭顯示器" |
 | throttle | 油門 | 油門 | DICT: "throttle 節流閥，油門" |
-| reticle | 光網 | | DICT: "fixed reticle 固定光網" |
+| reticle | 準心 | 準心 | The game word, chosen by the project owner. DICT has "fixed reticle 固定光網" |
 | radar | 雷達 | 雷達 | DICT |
 | lock on | 鎖定 | 鎖定 | DICT: "lock on ( 用雷達 ) 鎖定 ( 目標 )" |
 | heat-seeking missile | 追熱飛彈 | | DICT: "heat-seeking missile 追熱飛彈" |
 | missile | 飛彈 | 飛彈 | DICT: "guided missile 導引飛彈" |
 | unguided rocket | 火箭 | | DICT: "unguided missile 無導引飛彈" |
 | cluster bomb | 集束炸彈 | | DICT: "cluster bomb 集束炸彈" |
-| Rockeye | 石眼 | 石眼 | 公視 2016-06-22: "MK20石眼集束炸彈" |
+| Rockeye | 石眼 | 石眼 | 公視 2016-06-22: "MK20石眼集束炸彈". The real Rockeye is a cluster bomb; in the game it is a heat-seeking missile, so the lines say 石眼追熱飛彈 |
 | laser | 雷射 | 雷射 | DICT: "laser beam weapon 雷射武器" |
 | aircraft cannon | 機砲 | 機砲 | DICT: "aircraft cannon 機砲" |
 | evasive maneuver | 規避動作 | 規避 | DICT: "evasive action 規避動作" |
@@ -61,3 +61,16 @@ Add 海軍 only when the service is not clear from the line.
 | debriefing | 任務歸詢 | 歸詢 | DICT: "debrief 任務歸詢" |
 | briefing | 簡報, 任務提示 | 任務提示 | DICT: "briefing 簡報" |
 | qualification | 資格 | 資格 | 國防部 2020: "兩機領隊資格" |
+| target drone | 靶機 | 靶機 | |
+| decommission (a ship) | 除役 | 除役 | |
+| payload, loadout | 酬載 | 酬載[:ㄗㄞ3] | 載 is third tone here (the project owner) |
+| jump in (subspace) | 躍遷 | 躍遷 | |
+| subspace | 亞空間 | 亞空間 | PTT Old-Games 2014-02-15 (FreeSpace guide): "星系間的亞空間(subspace)通道" |
+| navigation computer | 導航電腦 | 導航電腦 | |
+| space superiority fighter, squadron | 太空優勢戰鬥機, 太空優勢中隊 | | 中央社 2025-12-19: "確保美國太空優勢"; after DICT "air superiority 空中優勢", "air superiority mission 空優任務". Not 制天: a MND paper writes 制太空權 and says it is "也稱『制天權』", with the PLA definition (https://www.mnd.gov.tw/File/29418) |
+
+## Spoken text
+
+The zh_tw column of `lines/*.csv` is the text that the TTS model speaks (CosyVoice 3; `gen_tw.py` converts it to Simplified script first). The rules of the zh_cn column apply (numbers as Chinese numerals, codes as the English voice says them). Units are Taiwan usage: 公尺, not 米.
+
+To fix the reading of a polyphonic character, write its bopomofo after it as `[:注音]`, for example `重[:ㄔㄨㄥ2]玩`. `gen_tw.py` turns it into the CosyVoice pinyin mark (`[ch][óng]`), which replaces the character. A mark needs an initial (not ㄧ, ㄨ or ㄩ alone). This is a different syntax from the IndexTTS mark in the zh_cn column.
