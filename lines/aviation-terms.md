@@ -2,7 +2,7 @@
 
 A reference for the cn and tw lines. "Checked" means that the source in the last column states the term. All other cells are model recall, not checked against a source. Check them before you use them in the lines.
 
-Sources that were tried and failed (2026-11-14): 术语在线 (termonline.cn) needs JavaScript, and the Playwright browser is not installed on soe. The search of 樂詞網 (terms.naer.edu.tw) ignores a query sent with curl. Some zh.wikipedia pages return 404 (空中優勢戰鬥機, 制空戰鬥機, 出擊).
+Sources that were tried and failed (2026-11-14): 术语在线 (termonline.cn) needs JavaScript. The search of 樂詞網 (terms.naer.edu.tw) ignores a query sent with curl. Some zh.wikipedia pages return 404 (空中優勢戰鬥機, 制空戰鬥機, 出擊).
 
 | English | Mainland | Mainland, spoken | Taiwan | Taiwan, spoken | Checked |
 |---|---|---|---|---|---|

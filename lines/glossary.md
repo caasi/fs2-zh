@@ -55,7 +55,7 @@ The pattern of Chinese game localizations (EVE Online, Star Citizen, Star Wars: 
 - A name from myth, a person or a place is transliterated: Myrmidon is 密尔米顿, Lucifer is 路西法号, Aquitaine is 阿基坦号.
 - A class takes 级 (赫卡忒级), one ship takes 号 (堡垒号). A model code and its letters stay in Latin letters (GTF, GTD, SD).
 
-The HUD shows ship class names from `ships.tbl`. The text mod translates `ships.tbl` with this glossary, so that the voice and the HUD use the same names. A player with the voice mod only sees the English names on the HUD; the mod description says so.
+The HUD shows ship class names from `ships.tbl`. The text mod (planned) will translate `ships.tbl` with this glossary, so that the voice and the HUD use the same names. A player with only the voice mod sees the English names on the HUD.
 
 ## Spoken text
 
@@ -65,7 +65,7 @@ The zh_cn column is the text that the TTS model speaks, so it is written as it i
 - A code is spoken as the English voice says it: TSM-103c is TSM 一零三C, HL-7 is HL七. No hyphen, because a TTS model can read it as 减 or 杠.
 - A class name takes 级 (赫卡忒级), a ship name takes 号 (堡垒号), a fighter type takes neither (密尔米顿).
 
-To fix the reading of a polyphonic character, mark its pinyin with the IndexTTS-2.5 syntax `<字|PINYIN>`, for example `<重|CHONG2>玩`. The text mod removes the marks. Valid pinyin is in `checkpoints/pinyin.vocab` of IndexTTS.
+To fix the reading of a polyphonic character, mark its pinyin with the IndexTTS-2.5 syntax `<字|PINYIN>`, for example `<重|CHONG2>玩`. The text mod (planned) will remove the marks. Valid pinyin is in `checkpoints/pinyin.vocab` of IndexTTS.
 
 Known misreadings, left as they are: IndexTTS sometimes says 堡垒号 as 堡里号 (Training 1, 2026-11-14).
 
