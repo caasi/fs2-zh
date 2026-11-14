@@ -10,7 +10,7 @@ Each language variant is a separate Knossos mod:
 
 The tw (Taiwan Mandarin) and hk (Cantonese) voice mods come later, each in its own folder.
 
-Status: work in progress. Only Training 1 has Chinese voice lines. The repo does not contain the voice files. To use the mod, make the voice files with the steps below.
+Status: work in progress. Training 1 and the built-in messages (`messages.tbl`: wingmen, Terran Command, support ships, AWACS) have Chinese voice lines. The repo does not contain the voice files. To use the mod, make the voice files with the steps below.
 
 ## Files
 

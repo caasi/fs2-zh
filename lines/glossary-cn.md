@@ -46,6 +46,38 @@ A star takes its popular Chinese name when it has one (Vega is 织女星), else 
 | heat-seeking | 热追踪 | |
 | hull integrity | 舰体完整度 | For any ship, also a fighter |
 | engine | 发动机 | Mainland aviation term, not 引擎 |
+| wing (Alpha, Beta, Gamma, Delta, Epsilon) | 编队 (阿尔法, 贝塔, 伽马, 德尔塔, 艾普西隆) | Beta wing is 贝塔编队. Greek letters are transliterated |
+| sir | 长官 | |
+| pilot (as an address) | 飞行员 | |
+| Terran (Vasudan speech to the player) | 人类 | Personas 6 and 7 |
+| Roger that, I copy, Acknowledged | 收到 | Affirmative is 明白 |
+| Negative | 否定 | |
+| By your command | 遵命 (persona 6), 谨遵您的命令 (persona 7) | |
+| bandit, hostiles | 敌机 | |
+| reinforcements | 增援 | |
+| on station, in position | 就位 | |
+| standing by | 待命 | |
+| check six, on your six | 注意后方, 六点钟 | |
+| evasive action | 规避 | |
+| break (to attack) | 脱离队形 | |
+| return to base | 返航 | |
+| support ship | 支援舰 | |
+| rearm | 补充弹药 | |
+| secondary weapon, secondary banks | 副武器 | |
+| ordnance | 弹药 | |
+| subsystem | 子系统 | |
+| disable (a ship) | 瘫痪 | Disable: shoot the engines |
+| disarm (a ship) | 解除武装 | Disarm: shoot the weapons |
+| IFF | 敌我识别, 敌我识别器 | |
+| jump signature | 跃迁信号 | |
+| jump drive | 亚空间发动机 | Same as subspace drive |
+| hull failure | 舰体解体 | |
+| AWACS | 预警机 | Mainland short form of 空中预警机 |
+| fighter cover | 战斗机掩护 | |
+| Mayday | 求救 | Not checked: a PLA pilot can say Mayday |
+| court martial | 军事法庭 | |
+| traitor | 叛徒 | |
+| Emperor | 皇帝 | |
 
 ## Names
 
@@ -68,6 +100,8 @@ The zh_cn column is the text that the TTS model speaks, so it is written as it i
 To fix the reading of a polyphonic character, mark its pinyin with the IndexTTS-2.5 syntax `<字|PINYIN>`, for example `<重|CHONG2>玩`. The text mod (planned) will remove the marks. Valid pinyin is in `checkpoints/pinyin.vocab` of IndexTTS.
 
 Known misreadings, left as they are: IndexTTS sometimes says 堡垒号 as 堡里号 (Training 1, 2026-11-14).
+
+Fixed with a mark: IndexTTS reads 伽马 as jiā mǎ (the ASR heard 加码). The mainland reading is gā mǎ, so write `<伽|GA1>马` (messages, 2026-11-15).
 
 ## Ranks
 

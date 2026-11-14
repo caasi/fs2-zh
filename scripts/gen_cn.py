@@ -13,8 +13,13 @@ import soundfile as sf, torch
 from indextts.infer_v2_5 import IndexTTS2
 
 # One long, calm line per speaker gives a steadier timbre than a 1 s line such as "Good job."
+# The messages.tbl speakers were chosen without listening: among the longest files of the speaker,
+# the one with a calm text (not a shout) and a steady level (low spread of the 50 ms RMS).
 SPEAKER_REF = {"loukakis": "TR1_CB_01.wav", "briefing": "TR1_MB_01.wav", "instructor": "DTM_IN_01.wav",
-               "terran_command": "TC_Oops2.wav"}
+               "terran_command": "TC_strayfinal.wav", "persona1": "1_backup.wav", "persona2": "2_Stray.wav",
+               "persona3": "3_Delta.wav", "persona4": "4_no.wav", "persona5": "5_Disarm.wav",
+               "persona6": "6_backup.wav", "persona7": "7_backup.wav", "support": "S_onway.wav",
+               "vasudan_support": "VS_onway2.wav", "awacs": "Awacs75.wav", "vasudan_awacs": "Vawacs25.wav"}
 
 lines_csv, work, voice_out, *only = sys.argv[1:]
 orig = os.path.join(work, "voice")
@@ -25,9 +30,12 @@ for en_csv in os.listdir(work):
             seconds[e["wav"].lower()], folder_of[e["wav"].lower()] = e["seconds"], e["folder"]
 rows = [r for r in csv.DictReader(open(lines_csv, encoding="utf-8")) if not only or r["wav"] in only]
 tts = IndexTTS2(cfg_path="checkpoints/config.yaml", model_dir="checkpoints", use_bf16=True)
-t0 = time.time()
+t0, done = time.time(), set()
 for r in rows:
     base = r["wav"][:-4]
+    if base in done:  # messages.tbl gives some files two texts; the first row is the one the retail file says
+        continue
+    done.add(base)
     folder = os.path.join(voice_out, folder_of[r["wav"].lower()])  # the folder of the retail file
     os.makedirs(folder, exist_ok=True)
     tmp = os.path.join(folder, base + "-cn.tmp.wav")
