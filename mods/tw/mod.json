@@ -1,0 +1,51 @@
+{
+  "mod_source": "local",
+  "installed": true,
+  "id": "fs2-zh-voice-tw",
+  "title": "FS2 Chinese Voice (TW)",
+  "type": "mod",
+  "parent": "FS2",
+  "version": "0.1.0",
+  "private": true,
+  "stability": "rc",
+  "description": "Taiwan Mandarin voice lines for FreeSpace 2. Select Voice Language: Chinese (TW) in the in-game options (F2, then F3, Audio). The voices are synthetic; their speaker references come from Common Voice.",
+  "notes": "",
+  "logo": null,
+  "tile": null,
+  "banner": null,
+  "release_thread": null,
+  "videos": [],
+  "screenshots": [],
+  "attachments": [],
+  "first_release": null,
+  "last_update": null,
+  "cmdline": "",
+  "mod_flag": [
+    "fs2-zh-voice-tw"
+  ],
+  "dev_mode": false,
+  "custom_build": null,
+  "owners": null,
+  "packages": [
+    {
+      "name": "Voice",
+      "notes": "",
+      "status": "required",
+      "dependencies": [
+        {
+          "id": "FS2",
+          "version": ">=1.20.0",
+          "packages": []
+        }
+      ],
+      "environment": null,
+      "folder": null,
+      "is_vp": false,
+      "files": [],
+      "filelist": [],
+      "executables": [],
+      "check_notes": null,
+      "isEnabled": true
+    }
+  ]
+}

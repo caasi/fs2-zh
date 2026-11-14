@@ -1,0 +1,5 @@
+; The Chinese lines can be longer than the English ones. Without this setting, the next
+; training message cuts the voice that plays.
+#LOCALIZATION SETTINGS
+$Don't pre-empt training message voice: YES
+#END
