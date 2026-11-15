@@ -18,10 +18,11 @@ from vasudan import VASUDAN, resample, vasudan_mix  # noqa: E402
 # One long, calm line per speaker gives a steadier timbre than a 1 s line such as "Good job."
 # The messages.tbl speakers were chosen without listening: among the longest files of the speaker,
 # the one with a calm text (not a shout) and a steady level (low spread of the 50 ms RMS).
+# persona7 uses 7_Stray.wav, the project owner's choice after listening (2026-11-16); 7_backup.wav was first.
 SPEAKER_REF = {"loukakis": "TR1_CB_01.wav", "briefing": "TR1_MB_01.wav", "instructor": "DTM_IN_01.wav",
                "terran_command": "TC_strayfinal.wav", "persona1": "1_backup.wav", "persona2": "2_Stray.wav",
                "persona3": "3_Delta.wav", "persona4": "4_no.wav", "persona5": "5_Disarm.wav",
-               "persona6": "6_backup.wav", "persona7": "7_backup.wav", "support": "S_onway.wav",
+               "persona6": "6_backup.wav", "persona7": "7_Stray.wav", "support": "S_onway.wav",
                "vasudan_support": "VS_onway2.wav", "awacs": "Awacs75.wav", "vasudan_awacs": "Vawacs25.wav"}
 
 
@@ -38,6 +39,16 @@ RETAIL_VOICE = {"2_Death.wav"}
 # squeezed "马上办" into 0.7 s and blurred 办 in all 14 takes (ASR heard 吧, 班 or English). The one take
 # with 3_attack was clear, and the user chose it (2026-11-15).
 EMO_REF = {"3_yes.wav": "3_attack.wav"}
+
+
+def emo_ref(r):
+    """The emotion reference of a line: its own retail line, except where EMO_REF says otherwise.
+
+    A retail Vasudan line has the Vasudan speech under the English; as emotion reference it is tried to be left
+    out (2026-11-16): the Vasudan lines use their speaker reference instead."""
+    if r["wav"] in EMO_REF:
+        return EMO_REF[r["wav"]]
+    return SPEAKER_REF[r["speaker"]] if r["speaker"] in VASUDAN else r["wav"]
 
 
 def tail_drop_db(d, sr):
@@ -75,7 +86,7 @@ for r in rows:
     tmp = os.path.join(folder, base + "-cn.tmp.wav")
     best = None
     for attempt in range(TRIES):
-        tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, EMO_REF.get(r["wav"], r["wav"])),
+        tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, emo_ref(r)),
                   text=tts_text(r["zh_cn"]), lang="ZH", output_path=tmp, use_random=False)
         d, sr = sf.read(tmp)
         drop = tail_drop_db(d, sr)
