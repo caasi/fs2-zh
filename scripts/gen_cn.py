@@ -1,11 +1,11 @@
-"""Make the zh-CN voice files of one mission with IndexTTS-2.5.
+"""Make the zh-CN voice files of one line file (a mission, or messages.tbl) with IndexTTS-2.5.
 
 usage (from the index-tts checkout, which holds checkpoints/):
   .venv/bin/python <repo>/scripts/gen_cn.py <lines.csv> <work dir> <mod data/voice dir> [wav ...]
 
 <work dir> holds the output of extract_en.py: the retail voice files in voice/,
 and <file>.en.csv with the folder and the English length of each line. Each line copies the timbre of its speaker's
-reference line and the emotion of its own original line. Output is
+reference line and the emotion of its own original line (EMO_REF and RETAIL_VOICE give the exceptions). Output is
 <name>-cn.ogg in the voice folder that the engine reads for that prefix.
 """
 import csv, os, sys, time
@@ -20,7 +20,6 @@ SPEAKER_REF = {"loukakis": "TR1_CB_01.wav", "briefing": "TR1_MB_01.wav", "instru
                "persona3": "3_Delta.wav", "persona4": "4_no.wav", "persona5": "5_Disarm.wav",
                "persona6": "6_backup.wav", "persona7": "7_backup.wav", "support": "S_onway.wav",
                "vasudan_support": "VS_onway2.wav", "awacs": "Awacs75.wav", "vasudan_awacs": "Vawacs25.wav"}
-
 
 
 def tts_text(zh):
@@ -42,7 +41,7 @@ def tail_drop_db(d, sr):
     """How far the last 60 ms is below the loudest 20 ms frame, in dB."""
     d = d if d.ndim == 1 else d.mean(axis=1)
     h = int(sr * 0.02)
-    db = 20 * np.log10(np.sqrt(np.mean(d[: len(d) // h * h].reshape(-1, h) ** 2, axis=1)) + 1e-9)
+    db = 20 * np.log10(np.sqrt(np.mean(d[len(d) % h :].reshape(-1, h) ** 2, axis=1)) + 1e-9)  # frames end at the file end
     return db.max() - db[-3:].mean()
 
 
