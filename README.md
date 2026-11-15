@@ -22,6 +22,7 @@ Status: work in progress. Training 1 and the built-in messages (`messages.tbl`: 
 - `scripts/gen_cn.py`: makes the cn voice files with IndexTTS-2.5.
 - `scripts/gen_tw.py`: makes the tw voice files with CosyVoice 3. `scripts/test_gen_tw.py` checks the text it gives to the model.
 - `scripts/match_loudness.py`: sets the loudness of each generated file to the loudness of its retail line.
+- `scripts/vasudan.py`: the Vasudan radio voice (a made-up Vasudan layer under the translator), shared by `gen_tw.py` and `gen_cn.py`. Run it to mix the Vasudan lines of one language again from the voices that the generators keep in `work/`.
 
 The English text, the retail voice files and the generated `.ogg` files are not in git.
 

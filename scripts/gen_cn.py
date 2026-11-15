@@ -12,6 +12,9 @@ import csv, os, sys, time
 import numpy as np, soundfile as sf, torch
 from indextts.infer_v2_5 import IndexTTS2
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from vasudan import VASUDAN, resample, vasudan_mix  # noqa: E402
+
 # One long, calm line per speaker gives a steadier timbre than a 1 s line such as "Good job."
 # The messages.tbl speakers were chosen without listening: among the longest files of the speaker,
 # the one with a calm text (not a shout) and a steady level (low spread of the 50 ms RMS).
@@ -81,7 +84,17 @@ for r in rows:
         if drop >= MIN_TAIL_DROP_DB:
             break
     drop, d = best
-    sf.write(os.path.join(folder, base + "-cn.ogg"), d, sr, format="OGG", subtype="VORBIS")
+    out = os.path.join(folder, base + "-cn.ogg")
+    if r["speaker"] in VASUDAN:
+        # The translator keeps the retail timbre; the Vasudan layer is the one gen_tw.py made for this line
+        # (the made-up words follow the English line). Run gen_tw.py for these lines first.
+        keep = os.path.join(work, "vasudan-cn")
+        os.makedirs(keep, exist_ok=True)
+        sf.write(os.path.join(keep, base + "-zh.wav"), d, sr)
+        bed, bed_sr = sf.read(os.path.join(work, "vasudan-tw", base + "-vasudan.wav"), dtype="float32")
+        vasudan_mix(d.astype("float32"), resample(bed, bed_sr, sr), sr, out)
+    else:
+        sf.write(out, d, sr, format="OGG", subtype="VORBIS")
     os.remove(tmp)
     cut = "" if drop >= MIN_TAIL_DROP_DB else ", CUT"
     print(f"{base}: {len(d) / sr:.1f} s (English {seconds.get(r['wav'].lower(), '?')} s), tail -{drop:.0f} dB, {attempt + 1} tries{cut}", flush=True)

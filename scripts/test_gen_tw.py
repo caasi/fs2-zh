@@ -1,7 +1,8 @@
-"""Checks of the text that gen_tw.py gives to CosyVoice.  Run: python -I scripts/test_gen_tw.py (needs opencc)."""
+"""Checks of the text that gen_tw.py gives to CosyVoice, and of the Vasudan mix in vasudan.py.  Run: python -I scripts/test_gen_tw.py (needs opencc)."""
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gen_tw as g
+import vasudan as v
 
 assert g.pinyin_mark("ㄗㄞ3") == "[z][ǎi]"
 assert g.pinyin_mark("ㄔㄨㄥ2") == "[ch][óng]"
@@ -20,28 +21,28 @@ assert g.tts_text("敵我識別") == "敌我[sh][ì]别"
 # the start is cut at the first sound, also when one loud sample comes before a quiet gap
 import numpy as np
 x = np.concatenate([[0.9], np.full(3999, 1e-4), np.full(8000, 0.3)]).astype("float32")
-assert abs(len(g.lead_trim(x, 16000)) - (8000 + 320)) <= 160
+assert abs(len(v.lead_trim(x, 16000)) - (8000 + 320)) <= 160
 # the last pause before the limit, not a later one
 sr = 1000
 y = np.concatenate([np.full(300, 0.3), np.zeros(100), np.full(300, 0.3), np.zeros(100), np.full(300, 0.3)]).astype("float32")
-assert abs(g.last_pause(y, sr, 650) - 350) <= 20
-assert 700 <= g.last_pause(y, sr, 760) < 760  # the part of a pause before the limit counts
-assert g.last_pause(y, sr, 300) is None
+assert abs(v.last_pause(y, sr, 650) - 350) <= 20
+assert 700 <= v.last_pause(y, sr, 760) < 760  # the part of a pause before the limit counts
+assert v.last_pause(y, sr, 300) is None
 # a layer that already fits is not changed
-assert len(g.fit_vasudan(y, sr, 2000)) == len(y)
-assert g.vasudan_text("Hold your fire now, wing pilot", "x").count(" ") == 2  # 6 English words, 3 made-up words
-assert g.vasudan_text("Formidable!", "x").count(" ") == 2  # at least 3 made-up words
+assert len(v.fit_vasudan(y, sr, 2000)) == len(y)
+assert v.vasudan_text("Hold your fire now, wing pilot", "x").count(" ") == 2  # 6 English words, 3 made-up words
+assert v.vasudan_text("Formidable!", "x").count(" ") == 2  # at least 3 made-up words
 assert g.pinyin_mark("ㄐㄩ2") == "[j][ú]"  # ü is u after j, q, x
-assert len(g.lead_trim(np.zeros(100, dtype="float32"), 24000)) == 100  # shorter than a frame: unchanged
-assert g.last_pause(np.zeros(100, dtype="float32"), 24000, 50) is None
+assert len(v.lead_trim(np.zeros(100, dtype="float32"), 24000)) == 100  # shorter than a frame: unchanged
+assert v.last_pause(np.zeros(100, dtype="float32"), 24000, 50) is None
 # a layer a little too long is only made faster; a much longer one is also cut, with a fade to silence
 sr = 24000
 tone = (0.3 * np.sin(np.arange(int(sr * 2.0)) * 2 * np.pi * 220 / sr)).astype("float32")
-faster = g.fit_vasudan(tone, sr, int(sr * 1.8))
+faster = v.fit_vasudan(tone, sr, int(sr * 1.8))
 assert int(sr * 1.5) <= len(faster) <= int(sr * 1.8)
-cut = g.fit_vasudan(tone, sr, int(sr * 1.0))
+cut = v.fit_vasudan(tone, sr, int(sr * 1.0))
 assert len(cut) <= int(sr * 1.0) and abs(float(cut[-1])) < 1e-3
 # a pause in the first half is not used as the cut point
 gap = tone.copy(); gap[int(sr * 0.2):int(sr * 0.3)] = 0
-assert len(g.fit_vasudan(gap, sr, int(sr * 1.0))) > int(sr * 0.5)
+assert len(v.fit_vasudan(gap, sr, int(sr * 1.0))) > int(sr * 0.5)
 print("ok")
