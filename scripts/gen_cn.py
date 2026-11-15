@@ -21,6 +21,14 @@ SPEAKER_REF = {"loukakis": "TR1_CB_01.wav", "briefing": "TR1_MB_01.wav", "instru
                "persona6": "6_backup.wav", "persona7": "7_backup.wav", "support": "S_onway.wav",
                "vasudan_support": "VS_onway2.wav", "awacs": "Awacs75.wav", "vasudan_awacs": "Vawacs25.wav"}
 
+
+
+def tts_text(zh):
+    # In IndexTTS-2.5 output the pause at "，" sounds longer than the pause at "。", so "马上，长官。" sounds
+    # broken in two (user listening test, 2026-11-15). The subtitle text keeps the comma; only the TTS input drops it.
+    return zh.replace("，长官", "长官")
+
+
 lines_csv, work, voice_out, *only = sys.argv[1:]
 orig = os.path.join(work, "voice")
 seconds, folder_of = {}, {}
@@ -40,7 +48,7 @@ for r in rows:
     os.makedirs(folder, exist_ok=True)
     tmp = os.path.join(folder, base + "-cn.tmp.wav")
     tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, r["wav"]),
-              text=r["zh_cn"], lang="ZH", output_path=tmp, use_random=False)
+              text=tts_text(r["zh_cn"]), lang="ZH", output_path=tmp, use_random=False)
     d, sr = sf.read(tmp)
     sf.write(os.path.join(folder, base + "-cn.ogg"), d, sr, format="OGG", subtype="VORBIS")
     os.remove(tmp)
