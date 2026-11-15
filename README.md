@@ -14,7 +14,7 @@ Status: work in progress. Training 1 and the built-in messages (`messages.tbl`: 
 
 ## Files
 
-- `lines/<mission>.csv`: the voice lines of one mission. `zh_cn` is the text that the TTS model speaks, so numbers and codes are written as they are spoken.
+- `lines/<mission>.csv`: the voice lines of one mission. `lines/messages.csv`: the built-in messages of `messages.tbl`, which all missions share. `zh_cn` is the text that the TTS model speaks, so numbers and codes are written as they are spoken.
 - `lines/glossary-cn.md`: zh-CN terms, ranks and rules. `lines/glossary-tw.md`: zh-TW terms of the ROC Armed Forces. `lines/aviation-terms.md`: mainland and Taiwan aviation terms.
 - `mods/cn`, `mods/tw`: the Knossos mods. `data/tables/zh-cn-lcl.tbm` adds the language `Chinese (CN)`, and `zh-tw-lcl.tbm` adds `Chinese (TW)`. Each table has its own file name, so that the engine reads both when both mods are on.
 - `scripts/vpx.py`: reads a retail `.vp` archive.
@@ -37,9 +37,13 @@ Do these steps from the root of this repo:
 
 ```bash
 python3 -I scripts/extract_en.py <FS2 folder> Training-1.fs2 "$PWD/work"
+python3 -I scripts/extract_en.py <FS2 folder> messages.tbl "$PWD/work"
 cd <index-tts checkout>
 .venv/bin/python <this repo>/scripts/gen_cn.py <this repo>/lines/training-1.csv <this repo>/work <this repo>/mods/cn/data/voice
+.venv/bin/python <this repo>/scripts/gen_cn.py <this repo>/lines/messages.csv <this repo>/work <this repo>/mods/cn/data/voice
 ```
+
+If `gen_cn.py` prints `CUT` for a line, listen to it: the line can end in the middle of a word. Give the file name as the last argument to make it again.
 
 Then set the loudness of the new files to the loudness of the retail lines. The TTS models do not do this: the cn output was 0 to 5 dB above the retail lines, and the tw output was 6 to 18 dB below them.
 
@@ -56,7 +60,7 @@ python3 -I <this repo>/scripts/match_loudness.py <this repo>/work <this repo>/mo
 
 ## How each variant is voiced
 
-- **cn**: IndexTTS-2.5. Each line copies the timbre of its speaker's reference line and the emotion of its own original line.
+- **cn**: IndexTTS-2.5. Each line copies the timbre of its speaker's reference line and the emotion of its own original line. The exceptions are in `scripts/gen_cn.py`: `EMO_REF` gives a line another emotion reference, and `RETAIL_VOICE` lines keep the retail voice.
 - **tw** (first version): CosyVoice 3, with Taiwan Mandarin reference voices from Common Voice, and the line in Simplified script as the input. The Taiwan accent comes first, so there is no emotion control. See `docs/voices-tw.md`.
 
 ## License

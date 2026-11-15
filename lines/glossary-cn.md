@@ -74,7 +74,7 @@ A star takes its popular Chinese name when it has one (Vega is 织女星), else 
 | hull failure | 舰体解体 | |
 | AWACS | 预警机 | Mainland short form of 空中预警机 |
 | fighter cover | 战斗机掩护 | |
-| Mayday | 求救 | Not checked: a PLA pilot can say Mayday |
+| Mayday | Mayday | Kept in English, as in aviation radio use: MH/T 4014-2003 5.1 starts a distress call with "MAYDAY" three times |
 | court martial | 军事法庭 | |
 | traitor | 叛徒 | |
 | Emperor | 皇帝 | |
@@ -102,6 +102,8 @@ To fix the reading of a polyphonic character, mark its pinyin with the IndexTTS-
 Known misreadings, left as they are: IndexTTS sometimes says 堡垒号 as 堡里号 (Training 1, 2026-11-14).
 
 Fixed with a mark: IndexTTS reads 伽马 as jiā mǎ (the ASR heard 加码). The mainland reading is gā mǎ, so write `<伽|GA1>马` (messages, 2026-11-15).
+
+Fixed with a mark: IndexTTS read 场 in 下场 with the wrong tone. Write `下<场|CHANG3>` (5_Traitor, 2026-11-15).
 
 ## Ranks
 
