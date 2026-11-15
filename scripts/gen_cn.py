@@ -32,6 +32,11 @@ def tts_text(zh):
 # A cry with no words keeps the retail voice: the engine plays <name>.wav when <name>-cn.ogg does not exist.
 RETAIL_VOICE = {"2_Death.wav"}
 
+# The emotion reference is the line's own retail file, except here. With the 0.8 s "I'm on it." the model
+# squeezed "马上办" into 0.7 s and blurred 办 in all 14 takes (ASR heard 吧, 班 or English). The one take
+# with 3_attack was clear, and the user chose it (2026-11-15).
+EMO_REF = {"3_yes.wav": "3_attack.wav"}
+
 
 def tail_drop_db(d, sr):
     """How far the last 60 ms is below the loudest 20 ms frame, in dB."""
@@ -68,7 +73,7 @@ for r in rows:
     tmp = os.path.join(folder, base + "-cn.tmp.wav")
     best = None
     for attempt in range(TRIES):
-        tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, r["wav"]),
+        tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, EMO_REF.get(r["wav"], r["wav"])),
                   text=tts_text(r["zh_cn"]), lang="ZH", output_path=tmp, use_random=False)
         d, sr = sf.read(tmp)
         drop = tail_drop_db(d, sr)
