@@ -9,7 +9,7 @@ reference line and the emotion of its own original line. Output is
 <name>-cn.ogg in the voice folder that the engine reads for that prefix.
 """
 import csv, os, sys, time
-import soundfile as sf, torch
+import numpy as np, soundfile as sf, torch
 from indextts.infer_v2_5 import IndexTTS2
 
 # One long, calm line per speaker gives a steadier timbre than a 1 s line such as "Good job."
@@ -29,6 +29,24 @@ def tts_text(zh):
     return zh.replace("，长官", "长官")
 
 
+# A cry with no words keeps the retail voice: the engine plays <name>.wav when <name>-cn.ogg does not exist.
+RETAIL_VOICE = {"2_Death.wav"}
+
+
+def tail_drop_db(d, sr):
+    """How far the last 60 ms is below the loudest 20 ms frame, in dB."""
+    d = d if d.ndim == 1 else d.mean(axis=1)
+    h = int(sr * 0.02)
+    db = 20 * np.log10(np.sqrt(np.mean(d[: len(d) // h * h].reshape(-1, h) ** 2, axis=1)) + 1e-9)
+    return db.max() - db[-3:].mean()
+
+
+# IndexTTS can sample the stop token too early, so a line ends in the middle of a word
+# (index-tts#247, #488, #523, #633). Ten retail lines that were checked end 14 dB or more below their
+# peak; a cut line ends within a few dB of it. Sampling is random, so a new try usually ends correctly.
+# A short shout can end loud and still be whole (1_Death "不要！" ends 2 dB down), so CUT asks for a listen.
+MIN_TAIL_DROP_DB, TRIES = 15, 4
+
 lines_csv, work, voice_out, *only = sys.argv[1:]
 orig = os.path.join(work, "voice")
 seconds, folder_of = {}, {}
@@ -41,16 +59,26 @@ tts = IndexTTS2(cfg_path="checkpoints/config.yaml", model_dir="checkpoints", use
 t0, done = time.time(), set()
 for r in rows:
     base = r["wav"][:-4]
-    if base in done:  # messages.tbl gives some files two texts; the first row is the one the retail file says
+    # messages.tbl gives some files two texts; the first row is the one the retail file says
+    if base in done or r["wav"] in RETAIL_VOICE:
         continue
     done.add(base)
     folder = os.path.join(voice_out, folder_of[r["wav"].lower()])  # the folder of the retail file
     os.makedirs(folder, exist_ok=True)
     tmp = os.path.join(folder, base + "-cn.tmp.wav")
-    tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, r["wav"]),
-              text=tts_text(r["zh_cn"]), lang="ZH", output_path=tmp, use_random=False)
-    d, sr = sf.read(tmp)
+    best = None
+    for attempt in range(TRIES):
+        tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, r["wav"]),
+                  text=tts_text(r["zh_cn"]), lang="ZH", output_path=tmp, use_random=False)
+        d, sr = sf.read(tmp)
+        drop = tail_drop_db(d, sr)
+        if best is None or drop > best[0]:
+            best = (drop, d)
+        if drop >= MIN_TAIL_DROP_DB:
+            break
+    drop, d = best
     sf.write(os.path.join(folder, base + "-cn.ogg"), d, sr, format="OGG", subtype="VORBIS")
     os.remove(tmp)
-    print(f"{base}: {len(d) / sr:.1f} s (English {seconds.get(r['wav'].lower(), '?')} s)", flush=True)
+    cut = "" if drop >= MIN_TAIL_DROP_DB else ", CUT"
+    print(f"{base}: {len(d) / sr:.1f} s (English {seconds.get(r['wav'].lower(), '?')} s), tail -{drop:.0f} dB, {attempt + 1} tries{cut}", flush=True)
 print("seconds:", round(time.time() - t0, 1), "max VRAM GB:", round(torch.cuda.max_memory_allocated() / 2**30, 2))
