@@ -20,7 +20,7 @@ import soundfile as sf, torch
 from opencc import OpenCC
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from vasudan import VASUDAN, VASUDAN_VOICE, vasudan_mix, vasudan_text  # noqa: E402
+from vasudan import TW_TRANSLATOR_EFFECT, VASUDAN, VASUDAN_VOICE, vasudan_mix, vasudan_text  # noqa: E402
 
 INITIALS = {"ㄅ": "b", "ㄆ": "p", "ㄇ": "m", "ㄈ": "f", "ㄉ": "d", "ㄊ": "t", "ㄋ": "n", "ㄌ": "l", "ㄍ": "g", "ㄎ": "k",
             "ㄏ": "h", "ㄐ": "j", "ㄑ": "q", "ㄒ": "x", "ㄓ": "zh", "ㄔ": "ch", "ㄕ": "sh", "ㄖ": "r", "ㄗ": "z", "ㄘ": "c", "ㄙ": "s"}
@@ -77,12 +77,6 @@ SPEAKER = {"loukakis": "d070d9ecfc", "briefing": "47f5d1a312", "instructor": "49
 RETAIL_VOICE = {"2_Death.wav"}
 
 # The Vasudan layer and its mix are shared with gen_cn.py (vasudan.py).
-# The translator is a Taiwan speaker made to sound like a speech synthesizer of the 2000s: telephone band,
-# 8 kHz and 6 bits, and a 70 Hz modulation for a metallic tone. The built-in CosyVoice voices had a mainland
-# accent; the project owner chose this "strong" version from three (2026-11-15).
-TRANSLATOR_EFFECT = ("highpass=f=300,lowpass=f=3400,aresample=8000,acrusher=bits=6:mode=lin:mix=0.7,"
-                     "aresample={sr},aeval=val(0)*(0.55+0.45*sin(2*PI*70*t)):c=same,volume=1.6")
-
 # The Common Voice references are calm reading, so a cry comes out flat. These lines get a style instruction
 # (CosyVoice instruct mode) in place of the plain zero-shot prompt.
 STYLE = {"_Death.wav": "请用极度惊恐、拼命大声喊叫的语气说这句话，像飞机正在坠毁。"}
@@ -179,7 +173,7 @@ def main(model_dir, lines_csv, work, cv, voice_out, *only):
             os.makedirs(keep, exist_ok=True)
             sf.write(os.path.join(keep, base + "-zh.wav"), audio, model.sample_rate)
             sf.write(os.path.join(keep, base + "-vasudan.wav"), vasudan, model.sample_rate)
-            vasudan_mix(audio, vasudan, model.sample_rate, out, TRANSLATOR_EFFECT)
+            vasudan_mix(audio, vasudan, model.sample_rate, out, TW_TRANSLATOR_EFFECT)
         else:
             sf.write(out, audio, model.sample_rate, format="OGG", subtype="VORBIS")
         print(f"{base}: {len(audio) / model.sample_rate:.1f} s (English {seconds.get(r['wav'].lower(), '?')} s)", flush=True)

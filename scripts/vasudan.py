@@ -19,7 +19,15 @@ VASUDAN = {"persona6", "persona7", "vasudan_support", "vasudan_awacs"}
 VASUDAN_VOICE = "6_backup.wav"
 VASUDAN_ROOTS = ["os", "ad", "ur", "osoy", "adoy", "uroy", "har", "sof", "yul", "sa"]
 VASUDAN_ENDS = ["i", "at", "arut", "ibeh", "it", "eh"]
-VASUDAN_DELAY_MS, VASUDAN_LEVEL = 500, 0.35  # 0.3 s and 0.2 were too short and too quiet (2026-11-15)
+VASUDAN_DELAY_MS = 500  # 0.3 s was too short (2026-11-15)
+# The level of the Vasudan layer against the translator voice (RMS, dB). A fixed gain of 0.35 gave -5 dB against
+# the tw translator, which the project owner tuned by ear, but -11 dB against the louder cn translator (2026-11-16).
+VASUDAN_REL_DB = -5.0
+# The tw translator is a Taiwan speaker made to sound like a speech synthesizer of the 2000s: telephone band,
+# 8 kHz and 6 bits, and a 70 Hz modulation for a metallic tone. The built-in CosyVoice voices had a mainland
+# accent; the project owner chose this "strong" version from three (2026-11-15).
+TW_TRANSLATOR_EFFECT = ("highpass=f=300,lowpass=f=3400,aresample=8000,acrusher=bits=6:mode=lin:mix=0.7,"
+                        "aresample={sr},aeval=val(0)*(0.55+0.45*sin(2*PI*70*t)):c=same,volume=1.6")
 # The Vasudan layer must end before the end of the translator, or it does not sound like a live translation (the
 # project owner, 2026-11-15). The layer is first made faster, up to VASUDAN_MAX_TEMPO, then cut at a pause.
 VASUDAN_END_BEFORE_S, VASUDAN_MAX_TEMPO = 0.6, 1.25
@@ -132,8 +140,11 @@ def vasudan_mix(translator, vasudan, sample_rate, out, effect=None):
         # few tens of ms would leave no room, so the layer always keeps at least 0.3 s.
         target = max(len(translator) + int(sample_rate * (VASUDAN_DELAY_MS / 1000 - VASUDAN_END_BEFORE_S)),
                      int(sample_rate * 0.3))
-        sf.write(b, fit_vasudan(bed, sample_rate, target), sample_rate)
-        filt = (f"[1:a]aecho=0.8:0.6:40:0.4,volume={VASUDAN_LEVEL}[bed];"
+        bed = fit_vasudan(bed, sample_rate, target)
+        rms = lambda x: float(np.sqrt(np.mean(np.square(x, dtype="float64")))) + 1e-9
+        bed = (bed * (rms(translator) / rms(bed) * 10 ** (VASUDAN_REL_DB / 20))).astype("float32")
+        sf.write(b, bed, sample_rate)
+        filt = ("[1:a]aecho=0.8:0.6:40:0.4[bed];"
                 f"[0:a]adelay={VASUDAN_DELAY_MS},asplit=2[zh][sc];"
                 "[bed][sc]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=250[d];"
                 "[d][zh]amix=inputs=2:duration=longest:normalize=0")
@@ -166,6 +177,4 @@ def remix(work, voice_out, lang, only=(), effect=None):
 
 if __name__ == "__main__":
     work, voice_out, lang, *only = sys.argv[1:]
-    if lang == "tw":
-        sys.exit("tw: run gen_tw.py, which adds the translator effect")
-    print("remixed", len(remix(work, voice_out, lang, only)))
+    print("remixed", len(remix(work, voice_out, lang, only, TW_TRANSLATOR_EFFECT if lang == "tw" else None)))
