@@ -1,6 +1,6 @@
 # Voices for the tw mod
 
-The tw (Taiwan Mandarin) voice files are made with CosyVoice 3 (Fun-CosyVoice3-0.5B-2512, Apache-2.0), with Taiwan Mandarin reference voices from Common Voice. In the first version, the Taiwan accent comes first, and there is no emotion control.
+The tw (Taiwan Mandarin) voice files are made with CosyVoice 3 (Fun-CosyVoice3-0.5B-2512, Apache-2.0), with Taiwan Mandarin reference voices from Common Voice. In the first version (Training 1), the Taiwan accent came first, and there was no emotion control. The built-in messages use the instruct mode of CosyVoice for one style: a frightened cry for the `_Death` lines of human pilots (`STYLE` in `scripts/gen_tw.py`).
 
 ## Why the original voices are not copied
 
@@ -77,5 +77,33 @@ The candidates were heard by the project owner on 2026-11-14. The first four can
 | Briefing and debriefing | `47f5d1a312` | fourties | 花蓮縣 | 4.4 characters per second | about 97 Hz |
 | Instructor | `49460f8c97` | twenties | 宜蘭縣 | 5.2 characters per second | about 130 Hz |
 | Loukakis | `d070d9ecfc` | fourties | 新竹市 | 5.4 characters per second | about 84 Hz |
+
+### The messages.tbl speakers
+
+The 207 built-in messages (wingmen, Terran Command, support ships, AWACS) have 12 speakers. The project owner picked the voices on 2026-11-15 from 42 candidates, by the same steps as above, with two changes:
+
+- The speech rate was measured on the clip length in `clip_durations.tsv`, which includes the silence around each sentence. On that scale the three Training 1 voices measure 2.1 to 3.1 characters per second, so the cut was 2.3.
+- The project owner imagines the wingmen as young pilots, in their twenties.
+
+| Speaker | Common Voice speaker | Age group | Place of birth | Pitch |
+|---|---|---|---|---|
+| persona1 | `557ebe984b` | twenties | 臺中市 | about 162 Hz |
+| persona2 | `7296001402` | twenties | 臺中市 | about 216 Hz |
+| persona3 | `7af1af1921` | twenties | 桃園市 | about 108 Hz |
+| persona4 | `dee6c34e84` | twenties | 新北市 | about 102 Hz |
+| persona5 | `ce175bd795` | twenties | 臺北市 | about 159 Hz |
+| support | `9076596318` | thirties | 臺北市 | about 121 Hz |
+| awacs | `c1a8a2007f` | thirties | 臺北市 | about 171 Hz |
+| terran_command | `47f5d1a312` (the briefing voice) | fourties | 花蓮縣 | about 97 Hz |
+
+The pitch is the median of four clips (librosa pYIN). persona2 is female in the tw mod.
+
+The Vasudans speak through a machine translator. The tw mod gives the translator one male and one female voice, so persona6, vasudan_support and vasudan_awacs share one voice. The translator voices are Taiwan speakers, `b7e8c8f4be` for the male speakers and `4be53f68d4` for persona7, with an effect that makes them sound like a speech synthesizer of the 2000s (`TRANSLATOR_EFFECT` in `scripts/gen_tw.py`). The built-in CosyVoice voices 中文男 and 中文女 were tried first, but they have a mainland accent. A speaker-embedding comparison of the retail files (3D-Speaker CAM++) points the same way: persona6, vasudan_support and vasudan_awacs have a cosine similarity of 0.79 to 0.88 to each other, against 0.4 to 0.6 for most pairs of different speakers. The human support ship and AWACS have 0.45, so the retail game seems to use two actors for them.
+
+The Vasudan layer under the translator is made up: about one word for every two English words of the line (at least three), built from the word parts of the Hard Light Productions Vasudan reference, read in the timbre of the retail line `6_backup.wav`, then 0.8 times lower in pitch and with an echo. The translator starts 0.5 s after the layer, and the layer ends at least 0.6 s before the end of the translator: a layer that is too long is made up to 1.25 times faster, then cut at a pause. `gen_tw.py` keeps both voices of each line in `<work dir>/vasudan-tw/`, so that a change of the mix needs no new run of the model.
+
+`TW_READINGS` in `gen_tw.py` gives CosyVoice the Taiwan reading of a character whose mainland reading differs (擊 jí, 識 shì). The glossary (`lines/glossary-tw.md`) lists the words.
+
+Two Common Voice speakers were first selected for the translator: `b7e8c8f4be` (male, fourties, about 97 Hz) and `80b0f99831` (female, twenties, about 185 Hz). The project owner keeps `80b0f99831` for a named female pilot of the campaign.
 
 New speakers come with the campaign. The first mission (`SM1-01.fs2`) needs more voices, for example a ship captain. Select them with the same steps when that mission is voiced.

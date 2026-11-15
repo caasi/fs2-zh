@@ -52,7 +52,7 @@ Add 海軍 only when the service is not clear from the line.
 | aircraft cannon | 機砲 | 機砲 | DICT: "aircraft cannon 機砲" |
 | evasive maneuver | 規避動作 | 規避 | DICT: "evasive action 規避動作" |
 | airspeed | 空速 | 空速 | DICT: "airspeed 空速" |
-| jet engine | 噴射發動機 | 發動機 | DICT: "jet engine 噴射發動機" (DICT also has 火箭引擎) |
+| jet engine | 噴射發動機 | 發動機 (command), 引擎 (pilots) | DICT: "jet engine 噴射發動機" (DICT also has 火箭引擎). The project owner (2026-11-15): command says 發動機, pilots say 引擎 |
 | destroyer | 驅逐艦 | 驅逐艦 | DICT |
 | flagship | 旗艦 | 旗艦 | DICT |
 | fleet | 艦隊 | 艦隊 | DICT |
@@ -67,6 +67,7 @@ Add 海軍 only when the service is not clear from the line.
 | jump in (subspace) | 躍遷 | 躍遷 | |
 | subspace | 亞空間 | 亞空間 | PTT Old-Games 2014-02-15 (FreeSpace guide): "星系間的亞空間(subspace)通道" |
 | navigation computer | 導航電腦 | 導航電腦 | |
+| subsystem | 子系統 | 子系統 | The project owner (2026-11-15) |
 | space superiority fighter, squadron | 太空優勢戰鬥機, 太空優勢中隊 | | 中央社 2025-12-19: "確保美國太空優勢"; after DICT "air superiority 空中優勢", "air superiority mission 空優任務". Not 制天: a MND paper writes 制太空權 and says it is "也稱『制天權』", with the PLA definition (https://www.mnd.gov.tw/File/29418) |
 
 ## Spoken text
