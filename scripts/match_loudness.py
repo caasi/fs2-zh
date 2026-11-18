@@ -1,16 +1,16 @@
 """Set the loudness of each generated voice file to the loudness of its retail line.
 
-usage: match_loudness.py <work dir> <mod data/voice dir> <suffix> [wav ...]
+usage: match_loudness.py <work dir> <mod data/voice dir> <language> [wav ...]
 
 <work dir> holds the retail voice files in voice/ (the output of extract_en.py).
-<suffix> is cn or tw: the script reads and rewrites <name>-<suffix>.ogg.
+<language> is cn or tw: the script reads and rewrites the .ogg files in each <language>/ subfolder.
 The TTS models give very different levels (BreezyVoice was 6 to 18 dB below the
 retail lines), so each file gets the integrated loudness (EBU R128) of its
 retail line. A limiter keeps the peaks at -1 dBFS.
 """
 import os, re, subprocess, sys
 
-work, voice, suffix, *only = sys.argv[1:]
+work, voice, lang, *only = sys.argv[1:]
 
 
 def loudness(path):
@@ -22,9 +22,9 @@ def loudness(path):
 retail = {f.lower(): os.path.join(work, "voice", f) for f in os.listdir(os.path.join(work, "voice"))}
 for folder, _, files in os.walk(voice):
     for f in sorted(files):
-        if not f.endswith(f"-{suffix}.ogg"):
+        if os.path.basename(folder) != lang or not f.endswith(".ogg") or f.endswith(".tmp.ogg"):
             continue
-        name = f[: -len(f"-{suffix}.ogg")] + ".wav"
+        name = f[: -len(".ogg")] + ".wav"
         if only and name not in only:
             continue
         out = os.path.join(folder, f)

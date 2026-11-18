@@ -6,7 +6,7 @@ usage (from the index-tts checkout, which holds checkpoints/):
 <work dir> holds the output of extract_en.py: the retail voice files in voice/,
 and <file>.en.csv with the folder and the English length of each line. Each line copies the timbre of its speaker's
 reference line and the emotion of its own original line (EMO_REF and RETAIL_VOICE give the exceptions). Output is
-<name>-cn.ogg in the voice folder that the engine reads for that prefix.
+cn/<name>.ogg: the cn language subfolder of the voice folder that the engine reads for that prefix.
 """
 import csv, os, sys, time
 import numpy as np, soundfile as sf, torch
@@ -28,7 +28,7 @@ def tts_text(zh):
     return zh.replace("，长官", "长官")
 
 
-# A cry with no words keeps the retail voice: the engine plays <name>.wav when <name>-cn.ogg does not exist.
+# A cry with no words keeps the retail voice: the engine plays <name>.wav when cn/<name>.ogg does not exist.
 RETAIL_VOICE = {"2_Death.wav"}
 
 # The emotion reference is the line's own retail file, except here. With the 0.8 s "I'm on it." the model
@@ -67,9 +67,9 @@ for r in rows:
     if base in done or r["wav"] in RETAIL_VOICE:
         continue
     done.add(base)
-    folder = os.path.join(voice_out, folder_of[r["wav"].lower()])  # the folder of the retail file
+    folder = os.path.join(voice_out, folder_of[r["wav"].lower()], "cn")  # the language subfolder of the retail file's folder
     os.makedirs(folder, exist_ok=True)
-    tmp = os.path.join(folder, base + "-cn.tmp.wav")
+    tmp = os.path.join(folder, base + ".tmp.wav")
     best = None
     for attempt in range(TRIES):
         tts.infer(spk_audio_prompt=os.path.join(orig, SPEAKER_REF[r["speaker"]]), emo_audio_prompt=os.path.join(orig, EMO_REF.get(r["wav"], r["wav"])),
@@ -81,7 +81,7 @@ for r in rows:
         if drop >= MIN_TAIL_DROP_DB:
             break
     drop, d = best
-    sf.write(os.path.join(folder, base + "-cn.ogg"), d, sr, format="OGG", subtype="VORBIS")
+    sf.write(os.path.join(folder, base + ".ogg"), d, sr, format="OGG", subtype="VORBIS")
     os.remove(tmp)
     cut = "" if drop >= MIN_TAIL_DROP_DB else ", CUT"
     print(f"{base}: {len(d) / sr:.1f} s (English {seconds.get(r['wav'].lower(), '?')} s), tail -{drop:.0f} dB, {attempt + 1} tries{cut}", flush=True)

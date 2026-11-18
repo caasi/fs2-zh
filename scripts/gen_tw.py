@@ -8,7 +8,7 @@ usage (from the CosyVoice checkout):
 folder with validated.tsv and clips/ of Common Voice 27.0 zh-TW. Each speaker
 of the game gets one Common Voice speaker as the reference voice (see
 docs/voices-tw.md). The reference clip is made once in <work dir>/refs-tw/.
-Output is <name>-tw.ogg in the voice folder of the retail file.
+Output is tw/<name>.ogg: the tw language subfolder of the voice folder of the retail file.
 
 The model reads the line in Simplified script: with Traditional script the
 output was less fluent (heard on 2026-11-14). The line in the CSV stays in
@@ -70,7 +70,7 @@ SPEAKER = {"loukakis": "d070d9ecfc", "briefing": "47f5d1a312", "instructor": "49
            "terran_command": "47f5d1a312", "persona1": "557ebe984b", "persona2": "7296001402", "persona3": "7af1af1921",
            "persona4": "dee6c34e84", "persona5": "ce175bd795", "persona6": "b7e8c8f4be", "persona7": "4be53f68d4",
            "vasudan_support": "b7e8c8f4be", "vasudan_awacs": "b7e8c8f4be", "support": "9076596318", "awacs": "c1a8a2007f"}
-# A cry with no words keeps the retail voice: the engine plays <name>.wav when <name>-tw.ogg does not exist.
+# A cry with no words keeps the retail voice: the engine plays <name>.wav when tw/<name>.ogg does not exist.
 RETAIL_VOICE = {"2_Death.wav"}
 
 # The Vasudans speak through a machine translator. In the retail files the Vasudan speech plays under the
@@ -258,7 +258,7 @@ def main(model_dir, lines_csv, work, cv, voice_out, *only):
         if base in done:
             continue
         done.add(base)
-        folder = os.path.join(voice_out, folder_of[r["wav"].lower()])
+        folder = os.path.join(voice_out, folder_of[r["wav"].lower()], "tw")
         os.makedirs(folder, exist_ok=True)
         ref, text = refs[r["speaker"]]
         # The Vasudans speak through a machine translator, which does not cry out; a cry also hid the
@@ -271,7 +271,7 @@ def main(model_dir, lines_csv, work, cv, voice_out, *only):
             parts = [x["tts_speech"] for x in model.inference_zero_shot(
                 tts_text(r["zh_tw"]), "You are a helpful assistant.<|endofprompt|>" + t2s.convert(text), ref, stream=False)]
         audio = torch.cat(parts, dim=1).squeeze(0).numpy()
-        out = os.path.join(folder, base + "-tw.ogg")
+        out = os.path.join(folder, base + ".ogg")
         if r["speaker"] in VASUDAN:
             vref = os.path.join(work, "voice", VASUDAN_VOICE)
             for attempt in range(3):
