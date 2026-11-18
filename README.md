@@ -1,6 +1,6 @@
 # fs2-zh
 
-Chinese voice mods for FreeSpace 2. Text mods come later. The mods need FreeSpace Open with the voice language option of [fs2open PR #1](https://github.com/caasi/fs2open.github.com/pull/1). A release build of FreeSpace Open does not have this option yet.
+Chinese voice mods for FreeSpace 2. Text mods come later. The mods need FreeSpace Open with the language subfolders of [fs2open PR #8062](https://github.com/scp-fs2open/fs2open.github.com/pull/8062). For a Chinese voice with the text in another language, FreeSpace Open also needs the voice language option of the branch [`feat/voice-language`](https://github.com/caasi/fs2open.github.com/tree/feat/voice-language). A release build of FreeSpace Open has neither yet.
 
 Each language variant is a separate Knossos mod:
 
@@ -16,7 +16,7 @@ Status: work in progress. Training 1 and the built-in messages (`messages.tbl`: 
 
 - `lines/<mission>.csv`: the voice lines of one mission. `lines/messages.csv`: the built-in messages of `messages.tbl`, which all missions share. `zh_cn` is the text that the TTS model speaks, so numbers and codes are written as they are spoken.
 - `lines/glossary-cn.md`: zh-CN terms, ranks and rules. `lines/glossary-tw.md`: zh-TW terms of the ROC Armed Forces. `lines/aviation-terms.md`: mainland and Taiwan aviation terms.
-- `mods/cn`, `mods/tw`: the Knossos mods. `data/tables/zh-cn-lcl.tbm` adds the language `Chinese (CN)`, and `zh-tw-lcl.tbm` adds `Chinese (TW)`. Each table has its own file name, so that the engine reads both when both mods are on.
+- `mods/cn`, `mods/tw`: the Knossos mods. A voice file is in the language subfolder of the folder of its retail file: `data/voice/briefing/cn/TR1_MB_01.ogg` replaces `data/voice/briefing/TR1_MB_01.wav`. The engine plays the retail file when the subfolder has no file of that name. Voice files from before this layout (`<name>-cn.ogg` next to the retail file) are not played: move each one to `cn/<name>.ogg`, or make the files again. `data/tables/zh-cn-lcl.tbm` adds the language `Chinese (CN)`, and `zh-tw-lcl.tbm` adds `Chinese (TW)`. Each table has its own file name, so that the engine reads both when both mods are on.
 - `scripts/vpx.py`: reads a retail `.vp` archive.
 - `scripts/extract_en.py`: writes the English lines, their lengths and the retail voice files of one mission to `work/`.
 - `scripts/gen_cn.py`: makes the cn voice files with IndexTTS-2.5.
@@ -56,7 +56,7 @@ python3 -I <this repo>/scripts/match_loudness.py <this repo>/work <this repo>/mo
 1. Make a link to `mods/cn` in the Knossos library: `<library>/FreespaceOpen/fs2-zh-voice-cn/fs2-zh-voice-cn-0.1.0`.
 2. Start Knossos again. The mod "FS2 Chinese Voice (CN)" shows in the list.
 3. Set the FSO build of the mod to a build with the voice language option.
-4. Play the mod. In the game, open the options (F2), then the in-game options (F3). Set Audio, Voice Language to `Chinese (CN)`.
+4. Play the mod. In the game, open the options (F2), then the in-game options (F3). Set Audio, Voice Language to `Chinese (CN)`. The mod does not change this setting for you: with the default value, `Same as text language`, the voice follows the text language, so English text plays the retail voice.
 
 ## How each variant is voiced
 

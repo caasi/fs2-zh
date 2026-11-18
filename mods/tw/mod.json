@@ -8,7 +8,7 @@
   "version": "0.1.0",
   "private": true,
   "stability": "rc",
-  "description": "Taiwan Mandarin voice lines for FreeSpace 2. Select Voice Language: Chinese (TW) in the in-game options (F2, then F3, Audio). The voices are synthetic; their speaker references come from Common Voice.",
+  "description": "Taiwan Mandarin voice lines for FreeSpace 2. To hear the Chinese voice, open the in-game options (F2, then F3) and set Audio, Voice Language to Chinese (TW). The voices are synthetic; their speaker references come from Common Voice.",
   "notes": "",
   "logo": null,
   "tile": null,
